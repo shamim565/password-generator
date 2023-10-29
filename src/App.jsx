@@ -1,10 +1,12 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 function App() {
   const [length, setLength] = useState(8)
   const [numberAllowed, setNumberAllowed] = useState(false)
   const [charAllowed, setCharAllowed] = useState(false)
   const [password, setPassword] = useState("")
+  
+  const passwordRef = useRef(null)
 
   const generatePassword = useCallback(() => {
       let pass = ""
@@ -19,6 +21,13 @@ function App() {
       setPassword(pass)
     },
      [length, numberAllowed, charAllowed, setPassword])
+
+  const copyPassword = useCallback(() => {
+    passwordRef.current?.select()
+    window.navigator.clipboard.writeText(password)
+  },
+  [password])
+
   useEffect(() => {
     generatePassword()
   },
@@ -37,8 +46,10 @@ function App() {
           placeholder='password'
           className='outline-none w-full py-1 px-3' 
           readOnly
+          ref={passwordRef}
           />
-          <button className='bg-blue-600 px-3 py-1 text-white outline-none'>copy</button>
+          <button onClick={copyPassword} 
+          className='bg-blue-600 px-3 py-1 text-white outline-none'>copy</button>
         </div>
         <div className='flex text-sm gap-x-2'>
           <div className='flex justify-center items-center gap-x-1'>
